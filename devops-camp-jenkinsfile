@@ -14,12 +14,12 @@ pipeline {
             steps {
                 echo "Cloning application repository"
                 sh 'git clone https://github.com/Aymoosy/afs-labs-student.git'
-            }
 	    dir('afs-labs-student') {
                     script {
                         env.COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                     }
                 }
+		}
         }
         stage('Application docker build') {
             steps {
