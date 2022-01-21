@@ -9,7 +9,7 @@ pipeline {
         DB_IMAGE_NAME = 'db'
     }
     stages {
-        stage('Application repository') {
+	stage('Application repository') {
             steps {
                 echo "Cloning application repository"
                 sh 'git clone https://github.com/Aymoosy/afs-labs-student.git'
@@ -17,15 +17,15 @@ pipeline {
                     script {
                         env.COMMIT_HASH = sh(script: 'git log --format=format:%h -1 --follow database/database.sql', returnStdout: true).trim()
                     }
-                }
-                withCredentials([usernamePassword(credentialsId: 'ashahin-harbor-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+		withCredentials([usernamePassword(credentialsId: 'ashahin-harbor-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                     script {
                         env.BUILD_DB = sh(script: 'python check_harbor_db.py -h $COMMIT_HASH -i $DB_IMAGE_NAME -r $HARBOR_REGISTRY -p $HARBOR_PROJECT -c ${USERNAME}:${PASSWORD}', returnStdout: true).trim()
                     }
                 }
+              }
             }
-        }
-        stage('DB changes: true') {
+      }
+    stage('DB changes: true') {
            when {
               environment name: 'BUILD_DB', value: 'true'
            }
@@ -65,11 +65,11 @@ pipeline {
               }
            }
         }
-    }
     post {
         cleanup {
             echo "Clean workspace"
             sh 'rm -rf .git ./*'
         }
     }
+ }
 }
